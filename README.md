@@ -75,6 +75,7 @@ airflow/
     ```bash
     docker-compose up -d
     ```
+    <img src="images/container_list.jpg" width="800">
 
 3.  **Debug 模式**
     ```bash
@@ -96,7 +97,7 @@ airflow/
 
 1.  **生成今日正常檔案**
     ```bash
-    python generate_fake_data.py --type valid
+    python generate_fake_data.py --type valid --date (optional: YYYYMMDD，預設為當天)
     ```
     這會產生 `data/test/record_YYYYMMDD.txt`。
 
@@ -122,10 +123,19 @@ airflow/
     - 可直接使用 `python generate_fake_data.py --type duplicate` 生成當天的 duplicate 檔案
 1.  啟動 Airflow (`docker-compose up -d`)。
 2.  在 Web UI 開啟 `daily_file_processor` DAG。
+    <img src="images/airflow_dagrun.jpg" width="500">
 3.  2/6 到 2/8 的資料會被執行。
 4.  觀察 Airflow DAG 應成功執行 (Sensor 偵測到檔案 -> Validate 通過 -> Move 檔案)。
     -   檔案將從 `data/test/` 移動至 `data/success/`。
-5.  測試異常情況：刪除成功目錄下的檔案，執行 `python generate_fake_data.py --type duplicate`，並在 Airflow 觸發 DAG (或等待排程)，應看到 Task 失敗並發送告警 Email (可於 Mailhog `http://localhost:8025` 查看)。
+    <img src="images/file_success_move.jpg" width="500">
+5.  測試異常情況：刪除成功目錄下的檔案，執行 `python generate_fake_data.py --type duplicate`，並在 Airflow 觸發 DAG (或等待排程)，應看到 Task 失敗並發送告警 Email (可於 Mailhog `http://localhost:1025` 查看)。
+    <img src="images/mailhog.jpg" width="500">
+    - small file
+        - <img src="images/small_mail.jpg" width="500">
+    - empty file
+        - <img src="images/empty_mail.jpg" width="500">
+    - duplicate id
+        - <img src="images/duplicate_mail.jpg" width="500">
 
 ---
 
@@ -147,3 +157,5 @@ catchup=True
 -   **`catchup=True`**: 告訴 Airflow 補跑從 `start_date` 到目前為止尚未執行的 DAG Runs。
 
 當 DAG 首次被啟用 (Unpaused) 時，Airflow 會自動排程執行過去這兩天的任務，從而滿足「回溯兩天前資料」的需求。這在資料補償或新上線排程需處理歷史資料時非常有用。
+- 如果當天是 2/8，則會自動 backfill 執行 2/6 和 2/7 的資料，紅線為當天的 dag run。
+<img src="images/backfill_2.jpg" width="500">
