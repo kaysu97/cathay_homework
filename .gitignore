@@ -1,0 +1,10 @@
+**/logs/*
+**/db/*
+**/data/success/*
+**/__pycache__/
+*.pyc
+.env
+# Keep the directories but ignore content
+!airflow/logs/.gitkeep
+!airflow/db/.gitkeep
+!airflow/data/success/.gitkeep
