@@ -153,7 +153,7 @@ catchup=True
 ```
 
 ### 說明
--   **`start_date`**: 設定為「現在時間減去 2 天」。
+-   **`start_date`**: 設定為 2026-02-05。
 -   **`catchup=True`**: 告訴 Airflow 補跑從 `start_date` 到目前為止尚未執行的 DAG Runs。
 
 當 DAG 首次被啟用 (Unpaused) 時，Airflow 會自動排程執行過去這兩天的任務，從而滿足「回溯兩天前資料」的需求。這在資料補償或新上線排程需處理歷史資料時非常有用。
