@@ -116,15 +116,15 @@ airflow/
         ```
 
 ### 驗證流程
-0.  假設今天是 2026-02-08，
+0.  **假設**今天是 2026-02-08 (因為每個人測試的當下時間不同，所以用假設的)
     - `data/test/record_20260206.txt` -- valid 檔案
     - `data/test/record_20260207.txt` -- small 檔案
     - `data/test/record_20260208.txt` -- empty 檔案
     - 可直接使用 `python generate_fake_data.py --type duplicate` 生成當天的 duplicate 檔案
 1.  啟動 Airflow (`docker-compose up -d`)。
 2.  在 Web UI 開啟 `daily_file_processor` DAG。
-    <img src="images/airflow_dagrun.jpg" width="500">
-3.  2/6 到 2/8 的資料會被執行。
+    <img src="images/backfill_2.jpg" width="500">
+3.  **假設**當天是 2/8，黃色螢光筆的地方為當天的 dag run，2/6 到 2/8 的資料會被執行。
 4.  觀察 Airflow DAG 應成功執行 (Sensor 偵測到檔案 -> Validate 通過 -> Move 檔案)。
     -   檔案將從 `data/test/` 移動至 `data/success/`。
     <img src="images/file_success_move.jpg" width="500">
@@ -142,7 +142,7 @@ airflow/
 ## (4) 關於回溯 (Backfill)
 
 題目要求：「DAG需回朔兩天前的資料」。
-假設今天為 2026-02-08，則需要回溯 2026-02-06 和 2026-02-07 的資料。
+**假設**今天為 2026-02-08，則需要回溯 2026-02-06 和 2026-02-07 的資料。
 但因為 start date 為資料時間，須設定為 2026-02-05，才能回溯到 2026-02-06 和 2026-02-07 的資料。
 
 ### 實作方式
@@ -158,4 +158,4 @@ catchup=True
 
 當 DAG 首次被啟用 (Unpaused) 時，Airflow 會自動排程執行過去這兩天的任務，從而滿足「回溯兩天前資料」的需求。這在資料補償或新上線排程需處理歷史資料時非常有用。
 - 如果當天是 2/8，則會自動 backfill 執行 2/6 和 2/7 的資料，紅線為當天的 dag run。
-<img src="images/backfill_2.jpg" width="800">
+<img src="images/airflow_dagrun.jpg" width="800">
