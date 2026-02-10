@@ -158,4 +158,4 @@ catchup=True
 
 當 DAG 首次被啟用 (Unpaused) 時，Airflow 會自動排程執行過去這兩天的任務，從而滿足「回溯兩天前資料」的需求。這在資料補償或新上線排程需處理歷史資料時非常有用。
 - 如果當天是 2/8，則會自動 backfill 執行 2/6 和 2/7 的資料，紅線為當天的 dag run。
-<img src="images/backfill_2.jpg" width="500">
+<img src="images/backfill_2.jpg" width="800">
